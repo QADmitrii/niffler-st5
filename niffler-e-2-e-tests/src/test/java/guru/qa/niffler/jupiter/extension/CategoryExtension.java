@@ -1,20 +1,15 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.CategoryApi;
-import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
-import guru.qa.niffler.jupiter.annotation.GenerateSpend;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.SpendJson;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-
 import java.io.IOException;
-import java.util.Date;
-import java.util.UUID;
+
 
 public class CategoryExtension implements BeforeEachCallback, ParameterResolver {
 
@@ -33,7 +28,6 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         CategoryApi categoryApi = retrofit.create(CategoryApi.class);
-        SpendApi spendApi = retrofit.create(SpendApi.class);
 
         AnnotationSupport.findAnnotation(
                 extensionContext.getRequiredTestMethod(),
