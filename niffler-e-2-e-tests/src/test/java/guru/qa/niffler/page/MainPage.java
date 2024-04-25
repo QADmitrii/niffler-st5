@@ -3,16 +3,13 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
-
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
-
 public class MainPage {
-
     //Elements
-    private final ElementsCollection sectionHistory = $(".spendings-table tbody").$$("tr");
+    private final ElementsCollection spendingTable = $(".spendings-table tbody").$$("tr");
     private final SelenideElement addSpendingSection = $(".main-content__section-add-spending"),
             categoryInput = addSpendingSection.$("div[id^='react-select-3-input']"),
             amountInput = addSpendingSection.$("input[name='amount']"),
@@ -23,8 +20,9 @@ public class MainPage {
 
     //Actions
     public SelenideElement findSpendingRowByDescription(String description) {
-        return sectionHistory.find(text(description));
+        return spendingTable.find(text(description));
     }
+
     public MainPage chooseSpending(SelenideElement sectionHistory) {
         sectionHistory.$$("td").first().scrollTo().click();
         return this;
@@ -35,8 +33,8 @@ public class MainPage {
         return this;
     }
 
-    public void checkSpendingShouldBeDeletedAfterTableAction(int expectedSize) {
-        sectionHistory.shouldHave(size(expectedSize));
+    public void checkCountOfSpendings(int expectedSize) {
+        spendingTable.shouldHave(size(expectedSize));
     }
 
 }

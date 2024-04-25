@@ -48,6 +48,6 @@ public class SpendingTest {
         SelenideElement rowWithSpending = mainPage.findSpendingRowByDescription(spendJson.description());
         mainPage.chooseSpending(rowWithSpending)
                 .deleteSpending()
-                .checkSpendingShouldBeDeletedAfterTableAction(0);
+                .checkCountOfSpendings(0);
     }
 }

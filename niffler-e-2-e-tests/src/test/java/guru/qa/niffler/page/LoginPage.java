@@ -35,8 +35,8 @@ public class LoginPage {
         return this;
     }
 
-    public LoginPage errorForm() {
-        errorForm.shouldHave(text("Bad credentials"));
+    public LoginPage checkError(String error) {
+        errorForm.shouldHave(text(error));
         return this;
     }
 

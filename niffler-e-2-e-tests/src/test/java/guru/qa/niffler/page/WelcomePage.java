@@ -9,15 +9,12 @@ public class WelcomePage {
     private final SelenideElement loginRedirect = $("a[href*='redirect']"),
             registrationRedirect = $("a[href*='register']");
 
-    public LoginPage doLoginRedirect(){
+    public LoginPage doLoginRedirect() {
         loginRedirect.click();
         return new LoginPage();
     }
-//    public RegistrationPage doRegistrationRedirect (){
-//        registrationRedirect.click();
-//        return new RegistrationPage();
-//    }
-    public WelcomePage waitPageLoaded(){
+
+    public WelcomePage waitPageLoaded() {
         loginRedirect.should(visible);
         registrationRedirect.should(visible);
         return this;
