@@ -16,7 +16,12 @@ public class MainPage {
             descriptionInput = addSpendingSection.$("input[name='description']"),
             calendarInput = addSpendingSection.$(".react-datepicker__input-container"),
             submitSpendingButton = addSpendingSection.$("button[type='submit']"),
-            submitDeleteSelected = $(".spendings__bulk-actions button");
+            submitDeleteSelected = $(".spendings__bulk-actions button"),
+            submitMainPage = $("a[href*='main']"),
+            submitFriends = $("a[href*='friends']"),
+            submitProfile = $("a[href*='profile']"),
+            submitLogOut = $("[data-tooltip-id=logout]"),
+            submitAllPeople = $("a[href*='people']");
 
     //Actions
     public SelenideElement findSpendingRowByDescription(String description) {
@@ -35,6 +40,31 @@ public class MainPage {
 
     public void checkCountOfSpendings(int expectedSize) {
         spendingTable.shouldHave(size(expectedSize));
+    }
+
+    public MainPage clickSubmitMainPage() {
+        submitMainPage.click();
+        return this;
+    }
+
+    public MainPage clickSubmitFriends() {
+        submitFriends.click();
+        return this;
+    }
+
+    public MainPage clickSubmitAllPeople() {
+        submitAllPeople.click();
+        return this;
+    }
+
+    public MainPage clickSubmitProfile() {
+        submitProfile.click();
+        return this;
+    }
+
+    public MainPage clickLogOut() {
+        submitLogOut.click();
+        return this;
     }
 
 }
