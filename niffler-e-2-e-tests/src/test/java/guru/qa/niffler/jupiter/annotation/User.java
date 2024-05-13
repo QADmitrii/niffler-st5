@@ -5,10 +5,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD,ElementType.ANNOTATION_TYPE})
-public @interface GenerateCategory {
-    String category();
-    String username();
+public @interface User {
 
+    Selector selector();
+
+    enum Selector {
+        WITH_FRIENDS,
+        INVITATION_RECEIVED,
+        INVITATION_SENT,
+    }
 }
