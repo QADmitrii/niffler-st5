@@ -40,8 +40,8 @@ public class FriendsTest {
                            @User(selector = WITH_FRIENDS) UserJson userFromTest) {
         allPeoplePage.waitPageLoaded();
         mainPage.clickSubmitAllPeople();
-        allPeoplePage.isFriends(userFromTest.username());
-        allPeoplePage.isInvitationRecieved(userForTest.username());
+        allPeoplePage.checkFriends(userFromTest.username());
+        allPeoplePage.checkInvitationRecieved(userForTest.username());
     }
 
     @Test
@@ -50,8 +50,8 @@ public class FriendsTest {
                         @User(selector = WITH_FRIENDS) UserJson userFromTest) {
         allPeoplePage.waitPageLoaded();
         mainPage.clickSubmitAllPeople();
-        allPeoplePage.isFriends(userFromTest.username());
-        allPeoplePage.isPendingInvitation(userForTest.username());
+        allPeoplePage.checkFriends(userFromTest.username());
+        allPeoplePage.checkPendingInvitation(userForTest.username());
     }
 
     @Test
@@ -59,6 +59,6 @@ public class FriendsTest {
     void friendsTest(@User(selector = WITH_FRIENDS) UserJson userForTest) {
         allPeoplePage.waitPageLoaded();
         mainPage.clickSubmitAllPeople();
-        allPeoplePage.isFriends(userForTest.username());
+        allPeoplePage.checkFriends(userForTest.username());
     }
 }
