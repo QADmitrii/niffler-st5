@@ -6,8 +6,10 @@ import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.jupiter.extension.CategoryExtension;
-import guru.qa.niffler.jupiter.extension.SpendExtension;
+import guru.qa.niffler.jupiter.extension.CategoryHttpExtension;
+import guru.qa.niffler.jupiter.extension.GenerateCategoryExtension;
+import guru.qa.niffler.jupiter.extension.GenerateSpendExtension;
+import guru.qa.niffler.jupiter.extension.SpendHttpExtension;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
@@ -18,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @WebTest
-@ExtendWith({CategoryExtension.class, SpendExtension.class})
+@ExtendWith({GenerateCategoryExtension.class, GenerateSpendExtension.class})
 public class SpendingTest {
     LoginPage loginPage = new LoginPage();
     MainPage mainPage = new MainPage();
@@ -32,23 +34,23 @@ public class SpendingTest {
     void doLogin() {
         Selenide.open("http://127.0.0.1:3000/main");
         welcomePage.waitPageLoaded().doLoginRedirect();
-        loginPage.fillLoginPass("ibutov", "12345")
+        loginPage.fillLoginPass("gena", "12345")
                 .clickSubmit();
     }
 
     @GenerateCategory(
-            username = "ibutov",
-            category = "Обучение"
+            username = "gena",
+            category = "Обучение2"
     )
-    @GenerateSpend(username = "ibutov",
+    @GenerateSpend(username = "gena",
             description = "QA.GURU Advanced 5",
             amount = 65000.00,
             currency = CurrencyValues.RUB,
-            category = "Обучение")
+            category = "Обучение2")
     @Test
     void spendingShouldBeDeletedAfterTableAction(SpendJson spendJson) {
-        SelenideElement rowWithSpending = mainPage.findSpendingRowByDescription(spendJson.description());
-        mainPage.chooseSpending(rowWithSpending)
+
+        mainPage.chooseSpending(mainPage.findSpendingRowByDescription(spendJson.description()))
                 .deleteSpending()
                 .checkCountOfSpendings(0);
     }

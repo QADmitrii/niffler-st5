@@ -4,13 +4,10 @@ import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.model.CurrencyValues;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
+import java.sql.*;
 import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -21,14 +18,14 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public CategoryEntity createCategory(CategoryEntity category) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO \"category\" (category, username) VALUES (?, ?)",
+             PreparedStatement PreparedStatement = conn.prepareStatement("INSERT INTO \"category\" (category, username) VALUES (?, ?)",
                      RETURN_GENERATED_KEYS)) {
-            ps.setString(1, category.getCategory());
-            ps.setString(2, category.getUsername());
-            ps.executeUpdate();
+            PreparedStatement.setString(1, category.getCategory());
+            PreparedStatement.setString(2, category.getUsername());
+            PreparedStatement.executeUpdate();
 
             UUID generatedId;
-            try (ResultSet resultSet = ps.getGeneratedKeys()) {
+            try (ResultSet resultSet = PreparedStatement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     generatedId = UUID.fromString(resultSet.getString("id"));
                 } else {
@@ -45,24 +42,28 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public CategoryEntity editCategory(CategoryEntity category) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("UPDATE \"category\" SET category = ?, username = ?" +
-                     " WHERE id = ?")) {
-            ps.setString(1, category.getCategory());
-            ps.setString(2, category.getUsername());
-            ps.setObject(3, category.getId());
-            ps.executeUpdate();
-            return category;
+             PreparedStatement preparedStatement = conn.prepareStatement(
+                     "UPDATE \"category\" SET category = ?, username = ? WHERE category = ?"
+             )) {
+            preparedStatement.setString(1, category.getCategory());
+            preparedStatement.setString(2, category.getUsername());
+            preparedStatement.setObject(3, category.getCategory());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        return category;
     }
 
     @Override
     public void removeCategory(CategoryEntity category) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM \"category\" WHERE id = ?")) {
-            ps.setObject(1, category.getId());
-            ps.executeUpdate();
+             PreparedStatement preparedStatement = conn.prepareStatement(
+                     "DELETE FROM \"category\" WHERE id = ?"
+             )) {
+            preparedStatement.setObject(1, category.getId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -70,33 +71,30 @@ public class SpendRepositoryJdbc implements SpendRepository {
 
     @Override
     public SpendEntity createSpend(SpendEntity spend) {
-        String request =
-                "INSERT INTO \"spend\" (username, currency, spend_date, amount, description, category_id)" +
-                        " VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection
+                     .prepareStatement("INSERT INTO public.spend(username, spend_date, currency, amount, description, category_id)" +
+                                     " VALUES (?, ?, ?, ?, ?, ?);",
+                             PreparedStatement.RETURN_GENERATED_KEYS
+                     )) {
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(request, RETURN_GENERATED_KEYS)) {
-            ps.setString(1, spend.getUsername());
-            ps.setString(2, String.valueOf(spend.getCurrency()));
+            preparedStatement.setString(1, spend.getUsername());
+            preparedStatement.setDate(2, (java.sql.Date) spend.getSpendDate());
+            preparedStatement.setString(3, spend.getCurrency().toString());
+            preparedStatement.setDouble(4, spend.getAmount());
+            preparedStatement.setString(5, spend.getDescription());
+            preparedStatement.setObject(6, spend.getCategory());
+            preparedStatement.executeUpdate();
 
-            Date spendDate = new Date(spend.getSpendDate().getTime());
-            ps.setDate(3, (java.sql.Date) spendDate);
-
-            ps.setDouble(4, spend.getAmount());
-            ps.setString(5, spend.getDescription());
-            ps.setObject(6, getCategoryId(spend.getCategory()));
-
-            ps.executeUpdate();
-
-            UUID generatedId;
-            try (ResultSet resultSet = ps.getGeneratedKeys()) {
+            UUID uuid = null;
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
                 if (resultSet.next()) {
-                    generatedId = UUID.fromString(resultSet.getString("id"));
+                    uuid = UUID.fromString(resultSet.getString("id"));
                 } else {
-                    throw new IllegalStateException("Can`t access to id");
+                    throw new IllegalArgumentException("Не удалось получить данные по трате");
                 }
             }
-            spend.setId(generatedId);
+            spend.setId(uuid);
             return spend;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -105,19 +103,16 @@ public class SpendRepositoryJdbc implements SpendRepository {
 
     @Override
     public SpendEntity editSpend(SpendEntity spend) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("UPDATE \"spend\" SET username = ?, currency = ?," +
-                     " spend_date = ?, amount = ?, description = ?, category_id = ? WHERE id = ?")) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("UPDATE \"spend\" SET username = ?, currency = ?, " +
+                     "spend_date = ?, amount = ?, description = ?, category_id = ? WHERE id = ?")) {
             ps.setString(1, spend.getUsername());
             ps.setString(2, String.valueOf(spend.getCurrency()));
-
-            Date spendDate = new Date(spend.getSpendDate().getTime());
-            ps.setDate(3, (java.sql.Date) spendDate);
-
+            ps.setDate(3, new Date(System.currentTimeMillis()));
             ps.setDouble(4, spend.getAmount());
             ps.setString(5, spend.getDescription());
-            ps.setObject(6, getCategoryId(spend.getCategory()));
-            ps.setObject(7, getSpendIdByCategoryId(getCategoryId(spend.getCategory())));
+            ps.setObject(6, spend.getCategory().getId());
+            ps.setObject(7, spend.getId());
             ps.executeUpdate();
             return spend;
         } catch (SQLException e) {
@@ -127,48 +122,17 @@ public class SpendRepositoryJdbc implements SpendRepository {
 
     @Override
     public void removeSpend(SpendEntity spend) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM \"spend\" WHERE id = ?")) {
-            ps.setObject(1, spend.getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection
+                     .prepareStatement("DELETE FROM public.spend where id =?"
+                     )) {
 
-    public UUID getCategoryId(String categoryName) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT id FROM category WHERE category = ?")) {
-            ps.setString(1, categoryName);
-            ps.execute();
+            preparedStatement.setObject(1, spend.getId());
+            preparedStatement.executeUpdate();
 
-            try (ResultSet resultSet = ps.getResultSet()) {
-                if (resultSet.next()) {
-                    return UUID.fromString(resultSet.getString("id"));
-                } else {
-                    throw new IllegalStateException("Can`t access to id");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public UUID getSpendIdByCategoryId(UUID catId) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT id FROM spend WHERE category_id = ?")) {
-            ps.setObject(1, catId);
-            ps.execute();
-
-            try (ResultSet resultSet = ps.getResultSet()) {
-                if (resultSet.next()) {
-                    return UUID.fromString(resultSet.getString("id"));
-                } else {
-                    throw new IllegalStateException("Can`t access to id");
-                }
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 }
+

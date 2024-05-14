@@ -25,11 +25,11 @@ public class MainPage {
 
     //Actions
     public SelenideElement findSpendingRowByDescription(String description) {
-        return spendingTable.find(text(description));
+        return spendingTable.find(text(description)).scrollIntoView(true);
     }
 
     public MainPage chooseSpending(SelenideElement sectionHistory) {
-        sectionHistory.$$("td").first().scrollTo().click();
+        sectionHistory.$$("td").first().click();
         return this;
     }
 

@@ -4,12 +4,11 @@ import guru.qa.niffler.model.CategoryJson;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class CategoryEntity implements Serializable {
+public class CategoryEntity {
     private UUID id;
     private String category;
     private String username;
@@ -19,6 +18,7 @@ public class CategoryEntity implements Serializable {
         categoryEntity.setId(categoryJson.id());
         categoryEntity.setCategory(categoryJson.category());
         categoryEntity.setUsername(categoryJson.username());
+
         return categoryEntity;
     }
 }

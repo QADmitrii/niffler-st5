@@ -7,18 +7,12 @@ import javax.sql.DataSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//enum - синглтон
 public enum DataSourceProvider {
     INSTANCE;
-
-    // хранилище dataSources
     private final Map<DataBase, DataSource> store = new ConcurrentHashMap<>();
 
-    // вернёт датасорс по ключу, если есть, иначе добавит и вернёт
     private DataSource computeDataSource(DataBase dataBase) {
-        // если в store по ключу db ничего нет, то в лямда положим
         return store.computeIfAbsent(dataBase, key -> {
-            //реализация датасорса для Постгрес
             PGSimpleDataSource pgDataSource = new PGSimpleDataSource();
             pgDataSource.setURL(dataBase.getJdbcUrl());
             pgDataSource.setUser("postgres");
@@ -26,7 +20,6 @@ public enum DataSourceProvider {
             return pgDataSource;
         });
     }
-
     public static DataSource dataSource(DataBase db) {
         return DataSourceProvider.INSTANCE.computeDataSource(db);
     }

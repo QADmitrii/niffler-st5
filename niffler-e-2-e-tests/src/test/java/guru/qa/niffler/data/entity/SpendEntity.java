@@ -5,20 +5,19 @@ import guru.qa.niffler.model.SpendJson;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class SpendEntity implements Serializable {
+public class SpendEntity {
     private UUID id;
     private String username;
     private CurrencyValues currency;
     private Date spendDate;
     private Double amount;
     private String description;
-    private String category;
+    private CategoryEntity category;
 
     public static SpendEntity fromJson(SpendJson spendJson) {
         SpendEntity spendEntity = new SpendEntity();
@@ -28,7 +27,8 @@ public class SpendEntity implements Serializable {
         spendEntity.setSpendDate(spendJson.spendDate());
         spendEntity.setAmount(spendJson.amount());
         spendEntity.setDescription(spendJson.description());
-        spendEntity.setCategory(spendJson.category());
+        spendEntity.category.setCategory(spendJson.category());
+
         return spendEntity;
     }
 }

@@ -11,11 +11,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 
-
-public class CategoryExtension implements BeforeEachCallback, ParameterResolver {
-
+public class GenerateCategoryExtension implements BeforeEachCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE
-            = ExtensionContext.Namespace.create(CategoryExtension.class);
+            = ExtensionContext.Namespace.create(GenerateCategoryExtension.class);
 
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .build();
@@ -25,29 +23,26 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
             .baseUrl("http://127.0.0.1:8093/")
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
-
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeEach(ExtensionContext context) throws Exception {
         CategoryApi categoryApi = retrofit.create(CategoryApi.class);
 
         AnnotationSupport.findAnnotation(
-                extensionContext.getRequiredTestMethod(),
+                context.getRequiredTestMethod(),
                 GenerateCategory.class
-        ).ifPresent(
-                category -> {
-                    CategoryJson categoryJson = new CategoryJson(
-                            null,
-                            category.category(),
-                            category.username()
-                    );
-                    try {
-                        CategoryJson result = categoryApi.createCategory(categoryJson).execute().body();
-                        extensionContext.getStore(NAMESPACE).put("category", result);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        );
+        ).ifPresent(generateCategory -> {
+            CategoryJson categoryJson = new CategoryJson(
+                    null,
+                    generateCategory.category(),
+                    generateCategory.username()
+            );
+            try {
+                CategoryJson result = categoryApi.createCategory(categoryJson).execute().body();
+                context.getStore(NAMESPACE).put("category", result);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+        });
     }
 
     @Override
