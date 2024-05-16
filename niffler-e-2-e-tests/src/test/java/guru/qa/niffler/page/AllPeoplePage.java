@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
 public class AllPeoplePage {
-    final ElementsCollection peopleAbstractTable = $(".abstract-table tbody").$$("tr");
+    private final ElementsCollection peopleAbstractTable = $(".abstract-table tbody").$$("tr");
     private final SelenideElement peopleContentTable = $(".header");
 
     public AllPeoplePage waitPageLoaded() {
@@ -17,22 +17,22 @@ public class AllPeoplePage {
         return this;
     }
 
-    public SelenideElement findUser(String username) {
+    private SelenideElement findUser(String username) {
         return peopleAbstractTable.find(((text(username))));
     }
 
-    public boolean isPendingInvitation(String username) {
+    public void checkPendingInvitation(String username) {
         findUser(username).lastChild().$(".abstract-table__buttons").shouldHave(text("Pending invitation"));
-        return true;
+
     }
 
-    public boolean isInvitationRecieved(String username) {
+    public void checkInvitationRecieved(String username) {
         findUser(username).lastChild().$(".abstract-table__buttons div").shouldHave(attribute("data-tooltip-id", "submit-invitation"));
-        return true;
+
     }
 
-    public boolean isFriends(String username) {
+    public void checkFriends(String username) {
         findUser(username).lastChild().$(".abstract-table__buttons").shouldHave(text("You are friends"));
-        return true;
+        
     }
 }
