@@ -45,7 +45,7 @@ public class GenerateSpendExtension implements BeforeEachCallback, ParameterReso
                     );
                     try {
                         SpendJson result = spendApi.createSpend(spendJson).execute().body();
-                        context.getStore(NAMESPACE).put("spend", result);
+                        context.getStore(NAMESPACE).put(context.getUniqueId(), result);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -54,7 +54,7 @@ public class GenerateSpendExtension implements BeforeEachCallback, ParameterReso
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext context) throws ParameterResolutionException {
         return parameterContext
                 .getParameter()
                 .getType()
@@ -62,7 +62,7 @@ public class GenerateSpendExtension implements BeforeEachCallback, ParameterReso
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get("spend");
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext context) throws ParameterResolutionException {
+        return context.getStore(NAMESPACE).get(context.getUniqueId());
     }
 }

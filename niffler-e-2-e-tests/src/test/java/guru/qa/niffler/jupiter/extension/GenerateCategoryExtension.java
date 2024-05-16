@@ -38,7 +38,7 @@ public class GenerateCategoryExtension implements BeforeEachCallback, ParameterR
             );
             try {
                 CategoryJson result = categoryApi.createCategory(categoryJson).execute().body();
-                context.getStore(NAMESPACE).put("category", result);
+                context.getStore(NAMESPACE).put(context.getUniqueId(), result);
             } catch (IOException e) {
                 throw new RuntimeException();
             }
@@ -46,7 +46,7 @@ public class GenerateCategoryExtension implements BeforeEachCallback, ParameterR
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext context) throws ParameterResolutionException {
         return parameterContext
                 .getParameter()
                 .getType()
@@ -54,7 +54,7 @@ public class GenerateCategoryExtension implements BeforeEachCallback, ParameterR
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get("category");
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext context) throws ParameterResolutionException {
+        return context.getStore(NAMESPACE).get(context.getUniqueId());
     }
 }

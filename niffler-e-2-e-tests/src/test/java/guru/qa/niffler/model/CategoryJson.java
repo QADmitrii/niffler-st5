@@ -13,7 +13,7 @@ public record CategoryJson(
         @JsonProperty("username")
         String username) {
 
-    public static CategoryJson fromEntity (CategoryEntity entity) {
+    public static CategoryJson fromEntity(CategoryEntity entity) {
         return new CategoryJson(
                 entity.getId(),
                 entity.getCategory(),
