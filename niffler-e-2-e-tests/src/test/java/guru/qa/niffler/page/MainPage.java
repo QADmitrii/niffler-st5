@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
@@ -21,11 +22,16 @@ public class MainPage {
             submitFriends = $("a[href*='friends']"),
             submitProfile = $("a[href*='profile']"),
             submitLogOut = $("[data-tooltip-id=logout]"),
-            submitAllPeople = $("a[href*='people']");
+            submitAllPeople = $("a[href*='people']"),
+            avatar = $(".header__avatar");
 
     //Actions
     public SelenideElement findSpendingRowByDescription(String description) {
         return spendingTable.find(text(description)).scrollIntoView(true);
+    }
+
+    public void avatarToVisible() {
+        avatar.shouldBe(visible);
     }
 
     public MainPage chooseSpending(SelenideElement sectionHistory) {

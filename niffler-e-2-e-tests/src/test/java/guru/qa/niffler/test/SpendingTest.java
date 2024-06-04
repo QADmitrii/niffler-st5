@@ -42,7 +42,8 @@ public class SpendingTest {
             username = "gena",
             category = "Обучение2"
     )
-    @GenerateSpend(username = "gena",
+    @GenerateSpend(
+            username = "gena",
             description = "QA.GURU Advanced 5",
             amount = 65000.00,
             currency = CurrencyValues.RUB,
