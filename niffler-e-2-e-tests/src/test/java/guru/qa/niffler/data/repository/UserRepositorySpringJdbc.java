@@ -120,7 +120,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
             );
             user.setId((UUID) keyHolder.getKeys().get("id"));
 
-
+            authJdbcTemplate.update("DELETE FROM \"authority\" WHERE user_id = ?", user.getId());
             authJdbcTemplate.batchUpdate("INSERT INTO authority (user_id, authority) VAlUES (?, ?)", new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {

@@ -114,6 +114,9 @@ public class UserRepositoryJdbc implements UserRepository {
                                     "WHERE id =?;",
                             PreparedStatement.RETURN_GENERATED_KEYS
                     );
+                 PreparedStatement deleteAuthorityPs = connection.prepareStatement(
+                         "DELETE FROM \"authority\" WHERE user_id = ?"
+                 );
                  PreparedStatement authPs = connection
                          .prepareStatement("INSERT INTO authority (user_id, authority) " +
                                  "VAlUES (?, ?)"
