@@ -7,13 +7,14 @@ import guru.qa.niffler.model.SpendJson;
 
 import java.util.Date;
 
-public class SpendJdbcExtension extends AbstractSpendExtension{
+public class SpendJdbcExtension extends AbstractSpendExtension {
     private final SpendRepository spendRepository = SpendRepository.getInstance();
+
     @Override
     protected SpendJson createSpend(GenerateSpend spend) {
         SpendEntity spendEntity = new SpendEntity();
         spendEntity.setSpendDate(new Date());
-        spendEntity.getCategory().setCategory(spend.category());
+        spendEntity.getCategory().getClass();
         spendEntity.setCurrency(spend.currency());
         spendEntity.setAmount(spend.amount());
         spendEntity.setDescription(spend.description());
@@ -24,6 +25,7 @@ public class SpendJdbcExtension extends AbstractSpendExtension{
 
     @Override
     protected void removeSpend(SpendJson spend) {
+        spendRepository.removeSpend(spend);
 
     }
 }

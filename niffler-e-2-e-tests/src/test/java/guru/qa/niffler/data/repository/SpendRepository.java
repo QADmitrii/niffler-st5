@@ -2,12 +2,13 @@ package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
+import guru.qa.niffler.model.SpendJson;
+
+import java.util.List;
 
 public interface SpendRepository {
     static SpendRepository getInstance() {
-        if ("jdbc".equals(System.getProperty("repo"))) {
-            return new SpendRepositoryJdbc();
-        }
+        System.getProperty("repo");
         return new SpendRepositoryJdbc();
     }
 
@@ -21,5 +22,7 @@ public interface SpendRepository {
 
     SpendEntity editSpend(SpendEntity category);
 
-    void removeSpend(SpendEntity category);
+    void removeSpend(SpendJson category);
+
+    List<SpendEntity> findAllByUsername(String username);
 }

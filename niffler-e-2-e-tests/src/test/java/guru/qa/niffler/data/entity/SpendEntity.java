@@ -17,9 +17,9 @@ public class SpendEntity {
     private Date spendDate;
     private Double amount;
     private String description;
-    private CategoryEntity category;
+    private UUID category;
 
-    public static SpendEntity fromJson(SpendJson spendJson) {
+    public static SpendEntity fromJson(SpendJson spendJson, CategoryEntity category) {
         SpendEntity spendEntity = new SpendEntity();
         spendEntity.setId(spendJson.id());
         spendEntity.setUsername(spendJson.username());
@@ -27,8 +27,7 @@ public class SpendEntity {
         spendEntity.setSpendDate(spendJson.spendDate());
         spendEntity.setAmount(spendJson.amount());
         spendEntity.setDescription(spendJson.description());
-        spendEntity.category.setCategory(spendJson.category());
-
+        spendEntity.setCategory(category.getId());
         return spendEntity;
     }
 }

@@ -21,15 +21,16 @@ public record SpendJson(
         String description,
         @JsonProperty("username")
         String username) {
-    public static SpendJson fromEntity(SpendEntity entity) {
+
+    public static SpendJson fromEntity(SpendEntity spendEntity){
         return new SpendJson(
-                entity.getId(),
-                entity.getSpendDate(),
-                entity.getCategory().getCategory(),
-                entity.getCurrency(),
-                entity.getAmount(),
-                entity.getDescription(),
-                entity.getUsername()
+                spendEntity.getId(),
+                spendEntity.getSpendDate(),
+                spendEntity.getCategory().toString(),
+                spendEntity.getCurrency(),
+                spendEntity.getAmount(),
+                spendEntity.getDescription(),
+                spendEntity.getUsername()
         );
     }
 }
